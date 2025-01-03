@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="/favicon.ico">
+
     <title>Feedback Form</title>
     <style>
         body {
@@ -58,7 +59,7 @@
 <body>
     <div class="container">
         <h1>Feedback Form</h1>
-        <form id="feedbackForm" name="feedback-form" method="POST" data-netlify="true" action="/thank-you/">
+        <form id="feedbackForm" method="POST" data-netlify="true" onsubmit="event.preventDefault(); submitFeedback();">
             <label for="name">Name (Optional):</label>
             <input type="text" id="name" name="name">
 
@@ -75,5 +76,45 @@
             Feedback submitted successfully!
         </div>
     </div>
+
+    <script>
+        function submitFeedback() {
+            const name = document.getElementById('name').value;
+            const movieFeedback = document.getElementById('movieFeedback').value;
+            const theaterFeedback = document.getElementById('theaterFeedback').value;
+    
+            // Debugging: Check if the data is being captured correctly
+            console.log('Name:', name);
+            console.log('Movie Feedback:', movieFeedback);
+            console.log('Theater Feedback:', theaterFeedback);
+    
+            // Sending data to the server
+            fetch('submit_feedback.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: name,
+                    movieFeedback: movieFeedback,
+                    theaterFeedback: theaterFeedback
+                })
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log('Server response:', data);  // Check server response
+                if (data.includes('Feedback submitted successfully')) {
+                    document.getElementById('confirmationMessage').style.display = 'block';
+                    document.getElementById('feedbackForm').reset();
+                } else {
+                    alert('Error: ' + data);  // Show error message
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);  // Catch any fetch-related errors
+            });
+        }
+    </script>
+    
 </body>
 </html>

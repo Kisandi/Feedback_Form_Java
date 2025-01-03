@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 50%;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input, textarea, button {
+            margin-top: 5px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .confirmation {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 4px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Feedback Form</h1>
+        <form id="feedbackForm" onsubmit="event.preventDefault(); submitFeedback();">
+            <label for="name">Name (Optional):</label>
+            <input type="text" id="name" name="name">
+
+            <label for="movieFeedback">Feedback for the Movie:</label>
+            <textarea id="movieFeedback" name="movieFeedback" rows="4" required></textarea>
+
+            <label for="theaterFeedback">Feedback for the Theater:</label>
+            <textarea id="theaterFeedback" name="theaterFeedback" rows="4" required></textarea>
+
+            <button type="submit">Submit</button>
+        </form>
+
+        <div class="confirmation" id="confirmationMessage">
+            Feedback submitted successfully!
+        </div>
+    </div>
+
+    <script>
+        function submitFeedback() {
+            const name = document.getElementById('name').value;
+            const movieFeedback = document.getElementById('movieFeedback').value;
+            const theaterFeedback = document.getElementById('theaterFeedback').value;
+    
+            // Debugging: Check if the data is being captured correctly
+            console.log('Name:', name);
+            console.log('Movie Feedback:', movieFeedback);
+            console.log('Theater Feedback:', theaterFeedback);
+    
+            // Sending data to the server
+            fetch('submit_feedback.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: name,
+                    movieFeedback: movieFeedback,
+                    theaterFeedback: theaterFeedback
+                })
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log('Server response:', data);  // Check server response
+                if (data.includes('Feedback submitted successfully')) {
+                    document.getElementById('confirmationMessage').style.display = 'block';
+                    document.getElementById('feedbackForm').reset();
+                } else {
+                    alert('Error: ' + data);  // Show error message
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);  // Catch any fetch-related errors
+            });
+        }
+    </script>
+    
+</body>
+</html>
